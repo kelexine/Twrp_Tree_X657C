@@ -1,21 +1,3 @@
-#
-# Copyright (C) 2020 The Android Open Source Project
-# Copyright (C) 2020 The TWRP Open Source Project
-# Copyright (C) 2020 SebaUbuntu's TWRP device tree generator
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-
 DEVICE_PATH := device/infinix/X657C
 
 # For building with minimal manifest
@@ -28,11 +10,18 @@ TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
 TARGET_CPU_VARIANT := generic
 
+TARGET_USES_64_BIT_BINDER := true
+
 # Assert
 TARGET_OTA_ASSERT_DEVICE := X657C
 
 # Bootloader"
 TARGET_BOOTLOADER_BOARD_NAME := CY-X657C-H6117
+
+# MTK Hardware
+BOARD_HAS_MTK_HARDWARE := true
+BOARD_USES_MTK_HARDWARE := true
+MTK_HARDWARE := true
 
 # File systems
 BOARD_HAS_LARGE_FILESYSTEM := true
@@ -45,12 +34,12 @@ TARGET_USERIMAGES_USE_F2FS := true
 TARGET_COPY_OUT_VENDOR := vendor
 
 # Kernel
-BOARD_KERNEL_CMDLINE := bootopt=64S3,32S1,32S1 cgroup_no_v1=memory,io buildvariant=user
+BOARD_KERNEL_CMDLINE := bootopt=64S3,32S1,32S1 androidboot.selinux=permissive
 TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dtb.img
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/kernel
 BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/dtbo.img
 BOARD_INCLUDE_RECOVERY_DTBO := true
-BOARD_BOOTIMG_HEADER_VERSION := 2
+BOARD_BOOTIMG_HEADER_VERSION := 1
 BOARD_KERNEL_BASE := 0x40000000
 BOARD_KERNEL_PAGESIZE := 2048
 BOARD_RAMDISK_OFFSET := 0x11b00000
@@ -65,28 +54,55 @@ TARGET_KERNEL_HEADER_ARCH := arm
 TARGET_KERNEL_SOURCE := kernel/infinix/X657C
 TARGET_KERNEL_CONFIG := X657C_defconfig
 
+# Partitions
+BOARD_FLASH_BLOCK_SIZE := 131072 # (BOARD_KERNEL_PAGESIZE * 64)
+BOARD_USES_METADATA_PARTITION := true
+BOARD_SUPER_PARTITION_SIZE := 9126805504 # TODO: Fix hardcoded value
+BOARD_BOOTIMAGE_PARTITION_SIZE := 40894464
+BOARD_RECOVERYIMAGE_PARTITION_SIZE := 40894464
+
+# Dynamic Partition
+BOARD_SUPER_PARTITION_GROUPS := main
+BOARD_MAIN_SIZE := 9122611200 # TODO: Fix hardcoded value
+BOARD_MAIN_PARTITION_LIST := \
+    system \
+    product \
+    vendor
+
 # Crypto
 TW_INCLUDE_CRYPTO := true
 TW_INCLUDE_CRYPTO_FBE := true
+BOARD_USES_METADATA_PARTITION := true
+
+
+# Encryption
+PLATFORM_SECURITY_PATCH := 2099-12-31
+VENDOR_SECURITY_PATCH := 2099-12-31
+PLATFORM_VERSION := 99.87.36
+PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
+
+# ADDING LOG
+TARGET_USES_LOGD := true
+TWRP_INCLUDE_LOGCAT := true
 
 # Platform
 TARGET_BOARD_PLATFORM := mt6761
 
-# Hack: prevent anti rollback
-PLATFORM_SECURITY_PATCH := 2099-12-31
-VENDOR_SECURITY_PATCH := 2099-12-31
-PLATFORM_VERSION := 16.1.0
-
 # TWRP Configuration
 TW_THEME := portrait_hdpi
-TW_DEFAULT_LANGUAGE := en
 TW_EXTRA_LANGUAGES := true
+TW_NO_SCREEN_BLANK := true
 TW_SCREEN_BLANK_ON_BOOT := true
-TW_INPUT_BLACKLIST := "hbtp_vm"
-TW_USE_TOOLBOX := true
+TW_BRIGHTNESS_PATH := /sys/class/leds/lcd-backlight/brightness
+TW_MAX_BRIGHTNESS := 255
+TW_DEFAULT_BRIGHTNESS := 255
+TW_EXCLUDE_DEFAULT_USB_INIT := true
+RECOVERY_SDCARD_ON_DATA := true
+TW_INCLUDE_NTFS_3G := true
+TW_INCLUDE_RESETPROP := true
+TW_INCLUDE_LIBRESETPROP :=true
 TW_Y_OFFSET := 64
 TW_H_OFFSET := -64
-TW_EXCLUDE_TWRPAPP := true
 
 # Maintainer/Version
-TW_DEVICE_VERSION := @Miraclev1
+TW_DEVICE_VERSION := Miraclev1
